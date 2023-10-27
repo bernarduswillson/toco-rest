@@ -4,22 +4,24 @@ services:
     image: postgres:latest
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: bewe
-      POSTGRES_DB: tocorest
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB}
     volumes:
       - "./prisma/migrations/db:/docker-entrypoint-initdb.d"
 
   express:
     image: node:latest
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - 5000:5000
+      - "5000:5000"
     restart: always
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgresql://postgres:bewe@postgres:5432/tocorest
-      JWT_SECRET: secret
+      DATABASE_URL: postgres://postgres:${DB_PASSWORD}@postgres:5432/${DB}
+      JWT_SECRET: ${JWT_SECRET}
