@@ -3,7 +3,9 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+const cors = require('cors');
 const app = express();
+app.use(cors());
 const PORT = 5000;
 const prisma = new PrismaClient();
 
@@ -68,11 +70,11 @@ app.use('/register', async (req, res) => {
 
 // LOGIN
 app.use('/login', async (req, res) => {
-    const {email, password} = req.body;
+    const {name, password} = req.body;
 
-    const user = await prisma.users.findUnique({
+    const user = await prisma.users.findFirst({
         where: {
-            email: email
+            name: name,
         }
     })
 
