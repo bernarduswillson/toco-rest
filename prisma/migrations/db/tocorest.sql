@@ -17,7 +17,6 @@ CREATE TABLE "exercise" (
     "exe_name" VARCHAR(255) NOT NULL,
     "category" VARCHAR(255),
     "difficulty" VARCHAR(255),
-    "time_created" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "exercise_pkey" PRIMARY KEY ("exercise_id")
 );
@@ -49,3 +48,9 @@ CREATE UNIQUE INDEX "username" ON "admin"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "exe_name" ON "exercise"("exe_name");
+
+-- AddForeignKey
+ALTER TABLE "question" ADD CONSTRAINT "question_exercise_id_fkey" FOREIGN KEY ("exercise_id") REFERENCES "exercise"("exercise_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "option" ADD CONSTRAINT "option_question_id_fkey" FOREIGN KEY ("question_id") REFERENCES "question"("question_id") ON DELETE CASCADE ON UPDATE CASCADE;

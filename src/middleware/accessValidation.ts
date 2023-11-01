@@ -2,16 +2,8 @@ import { admin } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-
-interface adminData {
-    admin_id: string;
-    username: string;
-    profile_img: string;
-    desc: string;
-}
-
 interface ValidationRequest extends Request {
-    adminData: adminData;
+    adminData: admin;
 }
 
 const accessValidation = (req: Request, res: Response, next: NextFunction) => {
@@ -33,7 +25,7 @@ const accessValidation = (req: Request, res: Response, next: NextFunction) => {
         const jwtDecode = jwt.verify(token, secret);
 
         if(typeof jwtDecode !== 'string'){
-            validationReq.adminData = jwtDecode as adminData
+            validationReq.adminData = jwtDecode as admin;
         }
     } catch (error) {
         return res.status(401).json({

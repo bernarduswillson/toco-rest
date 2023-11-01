@@ -22,13 +22,17 @@ model exercise {
   exe_name    String   @unique(map: "exe_name") @db.VarChar(255)
   category    String?  @db.VarChar(255)
   difficulty  String?  @db.VarChar(255)
-  time_created  DateTime @default(now()) @db.Timestamp(6)
+  
+  questions   question[] 
 }
 
 model question {
   question_id Int      @id @default(autoincrement())
   exercise_id Int      @db.Integer
   question    String   @db.Text
+  
+  exercise    exercise @relation(fields: [exercise_id], references: [exercise_id], onDelete: Cascade)
+  options     option[]
 }
 
 model option {
@@ -36,4 +40,6 @@ model option {
   question_id Int      @db.Integer
   option      String   @db.Text
   is_correct  Boolean  @default(false) @db.Boolean
+  
+  question    question @relation(fields: [question_id], references: [question_id], onDelete: Cascade)
 }
