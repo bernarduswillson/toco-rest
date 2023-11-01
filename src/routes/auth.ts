@@ -8,51 +8,52 @@ const prisma = new PrismaClient();
 
 // Register
 router.post('/register', async (req, res) => {
-    const {name, email, password} = req.body;
+    const {username, email, password} = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await prisma.users.create({
+    const result = await prisma.admin.create({
         data: {
-            name,
+            username,
             email,
             password: hashedPassword,
         }
     })
 
     res.json({
-        message: 'user created'
+        message: 'Admin created successfully'
     })
 });
 
 // Login
 router.post('/login', async (req, res) => {
-    const {name, password} = req.body;
+    const {username, password} = req.body;
 
-    const user = await prisma.users.findFirst({
+    const admin = await prisma.admin.findFirst({
         where: {
-            name: name,
+            username: username,
         }
     })
 
-    if(!user) {
+    if(!admin) {
         return res.status(404).json({
-            message: 'User not found'
+            message: 'Admin not found'
         })
     }
 
-    if(!user.password) {
+    if(!admin.password) {
         return res.status(404).json({
             message: 'Password not set'
         })
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const isPasswordValid = await bcrypt.compare(password, admin.password)
 
     if(isPasswordValid){
         const payload = {
-            id: user.id,
-            name: user.name,
-            address: user.address
+            admin_id: admin.admin_id,
+            username: admin.username,
+            profile_img: admin.profile_img,
+            desc: admin.desc,
         }
 
         const secret = process.env.JWT_SECRET!;
@@ -63,15 +64,16 @@ router.post('/login', async (req, res) => {
 
         return res.json({
             data: {
-                id: user.id,
-                name: user.name,
-                address: user.address
+                id: admin.admin_id,
+                username: admin.username,
+                profile_img: admin.profile_img,
+                desc: admin.desc,
             },
             token: token
         })
     } else {
         return res.status(403).json({
-            message: 'Wrong password'
+            message: 'Incorrect password'
         })
     }
 });
