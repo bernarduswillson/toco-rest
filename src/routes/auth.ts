@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import { error } from 'console';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -10,43 +11,60 @@ const prisma = new PrismaClient();
 router.post('/register', async (req, res) => {
     const {username, email, password} = req.body;
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await prisma.admin.create({
-        data: {
-            username,
-            email,
-            password: hashedPassword,
-        }
-    })
-
-    res.json({
-        message: 'Admin created successfully'
-    })
+    
+    try {
+        // Create new admin
+        await prisma.admin.create({
+            data: {
+                username,
+                email,
+                password: hashedPassword,
+            }
+        });
+        
+        return res.status(200).json({
+            message: 'Register success'
+        });
+    } catch (error) {
+        return res.status(404).json({
+            message: 'Register failed'
+        });
+    }
 });
 
 // Login
 router.post('/login', async (req, res) => {
     const {username, password} = req.body;
+    let isPasswordValid;
+    let admin;
 
-    const admin = await prisma.admin.findFirst({
-        where: {
-            username: username,
+    // Validation
+    try {
+        admin = await prisma.admin.findFirst({
+            where: {
+                username: username,
+            }
+        });
+
+        // Admin exists validation
+        if(!admin) {
+            throw error;
         }
-    })
+    
+        // Admin password validation
+        if(!admin.password) {
+            throw error;
+        }
 
-    if(!admin) {
+        isPasswordValid = await bcrypt.compare(password, admin.password);
+    } catch (error) {
         return res.status(404).json({
-            message: 'Admin not found'
-        })
+            message: 'Incorrect username or password'
+        });
     }
-
-    if(!admin.password) {
-        return res.status(404).json({
-            message: 'Password not set'
-        })
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, admin.password)
+    
 
     if(isPasswordValid){
         const payload = {
@@ -54,15 +72,18 @@ router.post('/login', async (req, res) => {
             username: admin.username,
             profile_img: admin.profile_img,
             desc: admin.desc,
-        }
+        };
 
+        // Create token secret
         const secret = process.env.JWT_SECRET!;
 
+        // Create token expiration
         const expiresIn = 60 * 60 * 1;
 
-        const token = jwt.sign(payload, secret, {expiresIn: expiresIn})
+        // Create token
+        const token = jwt.sign(payload, secret, {expiresIn: expiresIn});
 
-        return res.json({
+        return res.status(200).json({
             data: {
                 id: admin.admin_id,
                 username: admin.username,
@@ -70,11 +91,11 @@ router.post('/login', async (req, res) => {
                 desc: admin.desc,
             },
             token: token
-        })
+        });
     } else {
         return res.status(403).json({
-            message: 'Incorrect password'
-        })
+            message: 'Login failed'
+        });
     }
 });
 
