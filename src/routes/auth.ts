@@ -99,4 +99,46 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// Check email
+router.post('/check-email', async (req, res) => {
+    const {email} = req.body;
+
+    const admin = await prisma.admin.findFirst({
+        where: {
+            email: email,
+        }
+    })
+
+    if(admin) {
+        return res.status(226).json({
+            message: 'Email already exists'
+        })
+    } else {
+        return res.status(200).json({
+            message: 'Email available'
+        })
+    }
+})
+
+// Check username
+router.post('/check-username', async (req, res) => {
+    const {username} = req.body;
+
+    const admin = await prisma.admin.findFirst({
+        where: {
+            username: username,
+        }
+    })
+
+    if(admin) {
+        return res.status(226).json({
+            message: 'Username already exists'
+        })
+    } else {
+        return res.status(200).json({
+            message: 'Username available'
+        })
+    }
+})
+
 export default router;
