@@ -54,3 +54,13 @@ ALTER TABLE "question" ADD CONSTRAINT "question_exercise_id_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "option" ADD CONSTRAINT "option_question_id_fkey" FOREIGN KEY ("question_id") REFERENCES "question"("question_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- INJECT DATA
+INSERT INTO "admin" ("email", "username", "password", "profile_img", "desc") VALUES ('bw@gmail.com', 'bw', '$2b$10$Yvq54vRFzIm..Wylqh/kauSQetp38pj6bq7MOkQj6SxhPGYoJgOrO', '', 'I am a developer');
+
+INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VALUES (1, 'Hello World', 'Basic', 'Easy');
+INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VALUES (2, 'FizzBuzz', 'Basic', 'Easy');
+INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VALUES (2, 'Factorial', 'Basic', 'Easy');
+INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VALUES (2, 'Palindrome', 'Basic', 'Easy');
+INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VALUES (3, 'Reverse String', 'Basic', 'Easy');
+INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VALUES (3, 'Reverse Integer', 'Basic', 'Easy');
