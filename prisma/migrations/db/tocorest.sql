@@ -64,3 +64,21 @@ INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VAL
 INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VALUES (2, 'Palindrome', 'Basic', 'Easy');
 INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VALUES (3, 'Reverse String', 'Basic', 'Easy');
 INSERT INTO "exercise" ("language_id", "exe_name", "category", "difficulty") VALUES (3, 'Reverse Integer', 'Basic', 'Easy');
+
+INSERT INTO "question" ("exercise_id", "question") VALUES (1, 'Apakah Ditra jago memancing?');
+INSERT INTO "question" ("exercise_id", "question") VALUES (1, 'Rod apa yang dipakai oleh Ditra?');
+INSERT INTO "question" ("exercise_id", "question") VALUES (2, 'Rod apa yang dipakai oleh Bewe?');
+
+INSERT INTO "option" ("question_id", "option") VALUES (1, 'Yes');
+INSERT INTO "option" ("question_id", "option", "is_correct") VALUES (1, 'No', true);
+INSERT INTO "option" ("question_id", "option") VALUES (2, 'Spinning');
+INSERT INTO "option" ("question_id", "option") VALUES (2, 'Feeder');
+INSERT INTO "option" ("question_id", "option") VALUES (2, 'Floater');
+INSERT INTO "option" ("question_id", "option", "is_correct") VALUES (2, 'Semua Benar', true);
+INSERT INTO "option" ("question_id", "option") VALUES (2, 'Tidak ada yang benar');
+INSERT INTO "option" ("question_id", "option") VALUES (3, 'Spinning');
+INSERT INTO "option" ("question_id", "option") VALUES (3, 'Feeder');
+INSERT INTO "option" ("question_id", "option") VALUES (3, 'Floater');
+INSERT INTO "option" ("question_id", "option", "is_correct") VALUES (3, 'Semua Benar', true);
+INSERT INTO "option" ("question_id", "option") VALUES (3, 'Tidak ada yang benar');
+
