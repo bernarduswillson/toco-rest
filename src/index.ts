@@ -4,6 +4,7 @@ import exerciseRoutes from './routes/exercise';
 import languageRoutes from './routes/language';
 import questionRoutes from './routes/question'
 import optionRoutes from './routes/option'
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const cors = require('cors');
@@ -11,6 +12,7 @@ app.use(cors());
 const PORT = 5000;
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/auth', authRoutes);
 app.use('/exercise', exerciseRoutes);
