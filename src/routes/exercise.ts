@@ -1,6 +1,7 @@
 import express from 'express';
 import accessValidation from '../middleware/accessValidation';
 import { PrismaClient } from '@prisma/client';
+import http from 'http';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -9,23 +10,62 @@ type Results = {
     [question_id: number]: string | null;
 };
 
+interface OptionData {
+    option_id: number;
+    option: string;
+    is_correct: boolean
+};
+
+interface QuestionData {
+    question: string;
+    options: OptionData[]
+};
+
 // Create exercise
 router.post('/create', accessValidation, async (req, res) => {
-    const { exe_name, language_id, category, difficulty } = req.body;
+
+    const token = req.cookies.token;
+
+    const { 
+        exe_name, 
+        language_id, 
+        category, 
+        difficulty,
+        questions
+    } = req.body;
 
     try {
-        const result = await prisma.exercise.create({
+        const exercise_result = await prisma.exercise.create({
             data: {
                 exe_name,
                 language_id,
                 category,
-                difficulty
+                difficulty,
             }
         });
 
+        for (const question of questions) {
+            const question_result = await prisma.question.create({
+                data: {
+                    exercise_id: exercise_result.exercise_id,
+                    question: question.question,
+                }
+            });
+
+            for (const option of question.options) {
+                await prisma.option.create({
+                    data: {
+                        question_id: question_result.question_id,
+                        option: option.option,
+                        is_correct: option.is_correct,
+                    }
+                });
+            }
+        }
+
         res.json({
             message: 'Exercise created successfully',
-            result,
+            exercise_result
         });
     } catch (error) {
         console.error(error);
