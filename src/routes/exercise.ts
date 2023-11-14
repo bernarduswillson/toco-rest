@@ -1,7 +1,6 @@
 import express from 'express';
 import accessValidation from '../middleware/accessValidation';
 import { PrismaClient } from '@prisma/client';
-import http from 'http';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -10,21 +9,18 @@ type Results = {
     [question_id: number]: string | null;
 };
 
-interface OptionData {
-    option_id: number;
-    option: string;
-    is_correct: boolean
-};
-
-interface QuestionData {
+interface QuestionResult {
+    question_id: number;
     question: string;
-    options: OptionData[]
-};
+    options?: Array<{
+        option_id: number;
+        option: string;
+        is_correct: boolean;
+    }> 
+}
 
 // Create exercise
 router.post('/create', accessValidation, async (req, res) => {
-
-    const token = req.cookies.token;
 
     const { 
         exe_name, 
@@ -77,13 +73,19 @@ router.post('/create', accessValidation, async (req, res) => {
 
 // Update exercise
 router.put('/update/:exe_id', accessValidation, async (req, res) => {
-    const { exercise_id } = req.params;
-    const { exe_name, language_id, category, difficulty } = req.body;
+    const { exe_id } = req.params;
+    const { 
+        exe_name, 
+        language_id, 
+        category, 
+        difficulty,
+        questions
+    } = req.body;
 
     try {
-        const result = await prisma.exercise.update({
+        const exercise_result = await prisma.exercise.update({
             where: {
-                exercise_id: parseInt(exercise_id),
+                exercise_id: parseInt(exe_id),
             },
             data: {
                 exe_name,
@@ -93,9 +95,53 @@ router.put('/update/:exe_id', accessValidation, async (req, res) => {
             },
         });
 
+        for (const question of questions) {
+
+            if (question.question_id < 0) {
+                const question_result = await prisma.question.create({
+                    data: {
+                        exercise_id: exercise_result.exercise_id,
+                        question: question.question,
+                    }
+                });
+    
+                for (const option of question.options) {
+                    await prisma.option.create({
+                        data: {
+                            question_id: question_result.question_id,
+                            option: option.option,
+                            is_correct: option.is_correct,
+                        }
+                    });
+                }
+
+            } else {
+                const question_result = await prisma.question.update({
+                    where: {
+                        question_id: parseInt(question.question_id),
+                    },
+                    data: {
+                        question: question.question,
+                    }
+                });
+    
+                for (const option of question.options) {
+                    await prisma.option.update({
+                        where: {
+                            option_id: option.option_id
+                        },
+                        data: {
+                            option: option.option,
+                            is_correct: option.is_correct,
+                        }
+                    });
+                }
+            }
+        }
+
         res.json({
             message: 'Exercise updated successfully',
-            result,
+            exercise_result,
         });
     } catch (error) {
         console.error(error);
@@ -107,12 +153,12 @@ router.put('/update/:exe_id', accessValidation, async (req, res) => {
 
 // Delete exercise
 router.delete('/delete/:exe_id', accessValidation, async (req, res) => {
-    const { exercise_id } = req.params;
+    const { exe_id } = req.params;
 
     try {
         const result = await prisma.exercise.delete({
             where: {
-                exercise_id: parseInt(exercise_id),
+                exercise_id: parseInt(exe_id),
             },
         });
 
@@ -153,14 +199,14 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get exercises from languages
-router.get('/:lang_id', async (req, res) => {
-    const { lang_id } = req.params;
+// Get exercise by id
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
 
     try {
-        const result = await prisma.exercise.findMany({
+        let exercise_result = await prisma.exercise.findUnique({
             where: {
-                language_id: parseInt(lang_id),
+                exercise_id: parseInt(id),
             },
             select: {
                 exercise_id: true,
@@ -170,6 +216,44 @@ router.get('/:lang_id', async (req, res) => {
                 difficulty: true,
             },
         });
+
+        const question_result_query = await prisma.question.findMany({
+            where: {
+                exercise_id: exercise_result?.exercise_id,
+            },
+            select: {
+                question_id: true,
+                question: true,
+            }
+        });
+
+        const question_result = await Promise.all(question_result_query.map(async question => {
+            const option_result = await prisma.option.findMany({
+                where: {
+                    question_id: question.question_id,
+                },
+                select: {
+                    option_id: true,
+                    option: true,
+                    is_correct: true,
+                }
+            });
+    
+            return {
+                question_id: question.question_id,
+                question: question.question,
+                options: option_result,
+            };
+        }));
+
+        const result = {
+            exercise_result: exercise_result?.exercise_id,
+            exe_name: exercise_result?.exe_name,
+            category: exercise_result?.category,
+            difficulty: exercise_result?.difficulty,
+            language_id: exercise_result?.language_id,
+            questions: question_result,
+        }
 
         res.json({
             message: 'Exercises retrieved successfully',
