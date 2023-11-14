@@ -51,6 +51,17 @@ CREATE TABLE "progress" (
     CONSTRAINT "progress_pkey" PRIMARY KEY ("progress_id")
 );
 
+-- CreateTable
+CREATE TABLE "merchandise" (
+    "merchandise_id" SERIAL NOT NULL,
+    "name" VARCHAR(255) NOT NULL,
+    "price" INTEGER NOT NULL,
+    "image" VARCHAR(255),
+    "desc" TEXT,
+
+    CONSTRAINT "merchandise_pkey" PRIMARY KEY ("merchandise_id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "email" ON "admin"("email");
 
@@ -59,6 +70,9 @@ CREATE UNIQUE INDEX "username" ON "admin"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "exe_name" ON "exercise"("exe_name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "name" ON "merchandise"("name");
 
 -- AddForeignKey
 ALTER TABLE "question" ADD CONSTRAINT "question_exercise_id_fkey" FOREIGN KEY ("exercise_id") REFERENCES "exercise"("exercise_id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -117,3 +131,7 @@ INSERT INTO "option" ("question_id", "option") VALUES (3, 'Feeder');
 INSERT INTO "option" ("question_id", "option") VALUES (3, 'Floater');
 INSERT INTO "option" ("question_id", "option", "is_correct") VALUES (3, 'Semua Benar', true);
 INSERT INTO "option" ("question_id", "option") VALUES (3, 'Tidak ada yang benar');
+
+INSERT INTO "merchandise" ("name", "price", "image", "desc") VALUES ('T-Shirt', 10000, 'pp.jpg', 'T-Shirt with Toco Logo');
+INSERT INTO "merchandise" ("name", "price", "image", "desc") VALUES ('Mug', 1000, 'pp.jpg', 'Mug with Toco Logo');
+INSERT INTO "merchandise" ("name", "price", "image", "desc") VALUES ('Sticker', 500, 'pp.jpg', 'Sticker with Toco Logo');

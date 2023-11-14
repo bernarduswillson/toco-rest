@@ -54,3 +54,11 @@ model progress {
   
   exercise    exercise @relation(fields: [exercise_id], references: [exercise_id], onDelete: Cascade)
 }
+
+model merchandise {
+  merchandise_id Int      @id @default(autoincrement())
+  name           String   @unique(map: "name") @db.VarChar(255)
+  price          Int      @db.Integer
+  image          String?  @db.VarChar(255)
+  desc           String?  @db.Text
+}
