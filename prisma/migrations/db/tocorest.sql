@@ -40,6 +40,17 @@ CREATE TABLE "option" (
     CONSTRAINT "option_pkey" PRIMARY KEY ("option_id")
 );
 
+-- CreateTable
+CREATE TABLE "progress" (
+    "progress_id" SERIAL NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "exercise_id" INTEGER NOT NULL,
+    "score" INTEGER NOT NULL,
+    "date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "progress_pkey" PRIMARY KEY ("progress_id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "email" ON "admin"("email");
 
@@ -54,6 +65,31 @@ ALTER TABLE "question" ADD CONSTRAINT "question_exercise_id_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "option" ADD CONSTRAINT "option_question_id_fkey" FOREIGN KEY ("question_id") REFERENCES "question"("question_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "progress" ADD CONSTRAINT "progress_exercise_id_fkey" FOREIGN KEY ("exercise_id") REFERENCES "exercise"("exercise_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- TRIGGER
+CREATE OR REPLACE FUNCTION check_progress()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM progress
+        WHERE user_id = NEW.user_id
+        AND exercise_id = NEW.exercise_id
+    ) THEN
+        RAISE EXCEPTION 'User has already attempted this exercise';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_progress_trigger
+BEFORE INSERT ON progress
+FOR EACH ROW EXECUTE FUNCTION check_progress();
+
 
 -- INJECT DATA
 INSERT INTO "admin" ("email", "username", "password", "profile_img", "desc") VALUES ('bw@gmail.com', 'bw', '$2b$10$Yvq54vRFzIm..Wylqh/kauSQetp38pj6bq7MOkQj6SxhPGYoJgOrO', '', 'I am a developer');
@@ -81,4 +117,3 @@ INSERT INTO "option" ("question_id", "option") VALUES (3, 'Feeder');
 INSERT INTO "option" ("question_id", "option") VALUES (3, 'Floater');
 INSERT INTO "option" ("question_id", "option", "is_correct") VALUES (3, 'Semua Benar', true);
 INSERT INTO "option" ("question_id", "option") VALUES (3, 'Tidak ada yang benar');
-

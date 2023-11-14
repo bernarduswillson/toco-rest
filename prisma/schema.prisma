@@ -23,7 +23,8 @@ model exercise {
   category    String?  @db.VarChar(255)
   difficulty  String?  @db.VarChar(255)
   
-  questions   question[] 
+  questions   question[]
+  progresses  progress[]
 }
 
 model question {
@@ -42,4 +43,14 @@ model option {
   is_correct  Boolean  @default(false) @db.Boolean
   
   question    question @relation(fields: [question_id], references: [question_id], onDelete: Cascade)
+}
+
+model progress {
+  progress_id Int      @id @default(autoincrement())
+  user_id     Int      @db.Integer
+  exercise_id Int      @db.Integer
+  score       Int      @db.Integer
+  date        DateTime @default(now()) @db.Timestamp
+  
+  exercise    exercise @relation(fields: [exercise_id], references: [exercise_id], onDelete: Cascade)
 }

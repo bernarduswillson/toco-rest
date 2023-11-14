@@ -331,5 +331,34 @@ router.post('/result/:exercise_id', async (req, res) => {
     }
 });
 
+// validate exercise id
+router.get('/validate/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const exercise = await prisma.exercise.findUnique({
+            where: {
+                exercise_id: parseInt(id),
+            },
+            select: {
+                exercise_id: true,
+            },
+        });
+
+        const isValidExercise = exercise !== null;
+
+        res.json({
+            message: 'Exercise id validated successfully',
+            result: isValidExercise,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'An error occurred while validating the exercise id',
+        });
+    }
+});
+
+
 
 export default router;
