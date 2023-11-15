@@ -31,6 +31,36 @@ router.post('/create', accessValidation, async (req, res) => {
     }
 });
 
+// Update merch
+router.put('/edit/:id', accessValidation, async (req, res) => {
+    const { id } = req.params;
+    const { name, price, image, desc } = req.body;
+
+    try {
+        const result = await prisma.merchandise.update({
+            where: {
+                merchandise_id: parseInt(id),
+            },
+            data: {
+                name,
+                price,
+                image,
+                desc,
+            }
+        });
+
+        res.json({
+            message: 'Merch updated successfully',
+            result,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'An error occurred while updating the merch',
+        });
+    }
+})
+
 // Get all merch
 router.get('/', async (req, res) => {
     try {
@@ -47,6 +77,36 @@ router.get('/', async (req, res) => {
         });
     }
 });
+
+// Get merch by id
+router.get('/:id', async (req, res) => {
+    const { id } = req.params; 
+
+    try {
+        const result = await prisma.merchandise.findUnique({
+            where: {
+                merchandise_id: parseInt(id),
+            }
+        });
+
+        if (result) {
+            res.json({
+                message: 'Merch retrieved successfully',
+                result
+            });
+        } else {
+            res.status(404).json({
+                message: 'Merch not found',
+                result
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'An error occurred while retrieving the merch',
+        });
+    }
+})
 
 // try buying merch (validate to SOAP)
 router.post('/buy/:merch_id', async (req, res) => {
