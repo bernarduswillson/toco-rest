@@ -126,7 +126,7 @@ router.get('/:id', async (req, res) => {
 // try buying merch (validate to SOAP)
 router.post('/buy/:merch_id', async (req, res) => {
     const { merch_id } = req.params;
-    const { user_id } = req.body;
+    const { user_id, email } = req.body;
 
     try {
         const merch = await prisma.merchandise.findUnique({
@@ -146,6 +146,7 @@ router.post('/buy/:merch_id', async (req, res) => {
                     <ser:createTransaction>
                         <user_id>${user_id}</user_id>
                         <amount>${merch.price}</amount>
+                        <email>${email}</email>
                         <type>buy merch</type>
                     </ser:createTransaction>
                 </soapenv:Body>
