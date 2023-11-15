@@ -1,20 +1,35 @@
 import express from 'express';
+import path from 'path';
+import multer from 'multer';
+import shortid from 'shortid';
 import accessValidation from '../middleware/accessValidation';
 import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const destinationPath = path.join(__dirname, '../images');
+        cb(null, destinationPath);
+    },
+    filename: function (req, file, cb) {
+        const uniqueFilename = `${shortid.generate()}-${file.originalname}`
+        cb(null, uniqueFilename);
+    }
+});
+const upload = multer({ storage });
+
 // Create merch
-router.post('/create', accessValidation, async (req, res) => {
-    const { name, price, image, desc } = req.body;
+router.post('/create', accessValidation, upload.single('image'), async (req, res) => {
+    const { name, price, desc } = req.body;
 
     try {
         const result = await prisma.merchandise.create({
             data: {
                 name,
-                price,
-                image,
+                price: parseInt(price),
+                image: req.file?.path,
                 desc,
             }
         });
@@ -196,7 +211,33 @@ router.delete('/delete/:id', accessValidation, async (req, res) => {
             message: 'An error occurred while deleting the merchandise',
         });
     }
-})
+});
 
+router.get('/validate/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const merchandise = await prisma.merchandise.findUnique({
+            where: {
+                merchandise_id: parseInt(id),
+            },
+            select: {
+                merchandise_id: true,
+            },
+        });
+
+        const isValid = merchandise !== null;
+
+        res.json({
+            message: 'Merchandise id validated successfully',
+            result: isValid,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'An error occurred while validating the merchandise id',
+        });
+    }
+});
 
 export default router;
