@@ -196,7 +196,33 @@ router.delete('/delete/:id', accessValidation, async (req, res) => {
             message: 'An error occurred while deleting the merchandise',
         });
     }
-})
+});
 
+router.get('/validate/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const merchandise = await prisma.merchandise.findUnique({
+            where: {
+                merchandise_id: parseInt(id),
+            },
+            select: {
+                merchandise_id: true,
+            },
+        });
+
+        const isValid = merchandise !== null;
+
+        res.json({
+            message: 'Merchandise id validated successfully',
+            result: isValid,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'An error occurred while validating the merchandise id',
+        });
+    }
+});
 
 export default router;
