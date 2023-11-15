@@ -1,20 +1,35 @@
 import express from 'express';
+import path from 'path';
+import multer from 'multer';
+import shortid from 'shortid';
 import accessValidation from '../middleware/accessValidation';
 import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const destinationPath = path.join(__dirname, '../images');
+        cb(null, destinationPath);
+    },
+    filename: function (req, file, cb) {
+        const uniqueFilename = `${shortid.generate()}-${file.originalname}`
+        cb(null, uniqueFilename);
+    }
+});
+const upload = multer({ storage });
+
 // Create merch
-router.post('/create', accessValidation, async (req, res) => {
-    const { name, price, image, desc } = req.body;
+router.post('/create', accessValidation, upload.single('image'), async (req, res) => {
+    const { name, price, desc } = req.body;
 
     try {
         const result = await prisma.merchandise.create({
             data: {
                 name,
-                price,
-                image,
+                price: parseInt(price),
+                image: req.file?.path,
                 desc,
             }
         });
