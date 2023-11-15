@@ -177,5 +177,26 @@ router.post('/buy/:merch_id', async (req, res) => {
     }
 });
 
+router.delete('/delete/:id', accessValidation, async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        const result = await prisma.merchandise.delete({
+            where: {
+                merchandise_id: parseInt(id),
+            },
+        })
+
+        res.json({
+            message: 'Merchandise deleted successfully',
+            result,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'An error occurred while deleting the merchandise',
+        });
+    }
+})
+
 
 export default router;
