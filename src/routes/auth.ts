@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { error } from 'console';
+import accessValidation from '../middleware/accessValidation';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -78,7 +79,7 @@ router.post('/login', async (req, res) => {
         const secret = process.env.JWT_SECRET!;
 
         // Create token expiration
-        const expiresIn = 60 * 60 * 1;
+        const expiresIn = 86400; // 1 day
 
         // Create token
         const token = jwt.sign(payload, secret, {expiresIn: expiresIn});
@@ -139,6 +140,11 @@ router.post('/check-username', async (req, res) => {
             message: 'Username available'
         })
     }
-})
+});
+
+// Validate token
+router.get('/validate', accessValidation, async (req, res) => {
+    
+});
 
 export default router;
