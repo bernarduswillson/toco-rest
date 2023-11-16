@@ -62,3 +62,9 @@ model merchandise {
   image          String?  @db.VarChar(255)
   desc           String?  @db.Text
 }
+
+model voucher {
+  voucher_id Int      @id @default(autoincrement())
+  code       String   @unique(map: "code") @db.VarChar(255)
+  amount     Int      @db.Integer
+}

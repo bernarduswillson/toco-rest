@@ -62,6 +62,15 @@ CREATE TABLE "merchandise" (
     CONSTRAINT "merchandise_pkey" PRIMARY KEY ("merchandise_id")
 );
 
+-- CreateTable
+CREATE TABLE "voucher" (
+    "voucher_id" SERIAL NOT NULL,
+    "code" VARCHAR(255) NOT NULL,
+    "amount" INTEGER NOT NULL,
+
+    CONSTRAINT "voucher_pkey" PRIMARY KEY ("voucher_id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "email" ON "admin"("email");
 
@@ -73,6 +82,9 @@ CREATE UNIQUE INDEX "exe_name" ON "exercise"("exe_name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "name" ON "merchandise"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "code" ON "voucher"("code");
 
 -- AddForeignKey
 ALTER TABLE "question" ADD CONSTRAINT "question_exercise_id_fkey" FOREIGN KEY ("exercise_id") REFERENCES "exercise"("exercise_id") ON DELETE CASCADE ON UPDATE CASCADE;
