@@ -60,7 +60,7 @@ router.get('/:id', accessValidation, async (req, res) => {
 
 // Create admin
 router.post('/create', accessValidation, async (req, res) => {
-  const {username, email, password} = req.body;
+  const { username, email, password } = req.body;
 
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
