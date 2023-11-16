@@ -12,10 +12,10 @@ type Results = {
 // Create exercise
 router.post('/create', accessValidation, async (req, res) => {
 
-    const { 
-        exe_name, 
-        language_id, 
-        category, 
+    const {
+        exe_name,
+        language_id,
+        category,
         difficulty,
         questions
     } = req.body;
@@ -64,10 +64,10 @@ router.post('/create', accessValidation, async (req, res) => {
 // Update exercise
 router.put('/update/:exe_id', accessValidation, async (req, res) => {
     const { exe_id } = req.params;
-    const { 
-        exe_name, 
-        language_id, 
-        category, 
+    const {
+        exe_name,
+        language_id,
+        category,
         difficulty,
         questions
     } = req.body;
@@ -94,7 +94,7 @@ router.put('/update/:exe_id', accessValidation, async (req, res) => {
                         question: question.question,
                     }
                 });
-    
+
                 for (const option of question.options) {
                     await prisma.option.create({
                         data: {
@@ -114,7 +114,7 @@ router.put('/update/:exe_id', accessValidation, async (req, res) => {
                         question: question.question,
                     }
                 });
-    
+
                 for (const option of question.options) {
                     await prisma.option.update({
                         where: {
@@ -228,7 +228,7 @@ router.get('/:id', async (req, res) => {
                     is_correct: true,
                 }
             });
-    
+
             return {
                 question_id: question.question_id,
                 question: question.question,
@@ -260,7 +260,7 @@ router.get('/:id', async (req, res) => {
 // Check score
 router.post('/result/:exercise_id', async (req, res) => {
     const { exercise_id } = req.params;
-    const selectedOptions = req.body;
+    const { selectedOptions, userId } = req.body;
 
     try {
         const result = await prisma.exercise.findUnique({
@@ -269,6 +269,7 @@ router.post('/result/:exercise_id', async (req, res) => {
             },
             select: {
                 exercise_id: true,
+                exe_name: true,
                 questions: {
                     select: {
                         question_id: true,
@@ -308,11 +309,59 @@ router.post('/result/:exercise_id', async (req, res) => {
             });
         }
 
-        res.json({
-            message: 'Exercise result retrieved successfully',
-            correctResults,
-            wrongResults,
+        let correctCount = Object.keys(correctResults).length;
+        let wrongCount = Object.keys(wrongResults).length;
+        let score = correctCount / (correctCount + wrongCount) * 100;
+
+        const soapRequest = `
+            <x:Envelope
+                xmlns:x="http://schemas.xmlsoap.org/soap/envelope/"
+                xmlns:ser="http://service.toco.org/">
+                <x:Header/>
+                <x:Body>
+                    <ser:addGems>
+                        <user_id>${userId}</user_id>
+                        <gem>${score}</gem>
+                        <type>Gems Recieved from ${result?.exe_name} Exercise</type>
+                    </ser:addGems>
+                </x:Body>
+            </x:Envelope>'
+            `;
+        const headers = {
+            'Content-Type': 'text/xml',
+            'SOAPAction': 'addGems',
+            'X-api-key': 'toco_rest',
+        };
+
+        const soapResponse = await fetch('http://localhost:8080/service/gems', {
+            method: 'POST',
+            headers: headers,
+            body: soapRequest,
         });
+
+        const soapXml = await soapResponse.text();
+
+        const startTag = '<return>';
+        const endTag = '</return>';
+        const startIndex = soapXml.indexOf(startTag);
+        const endIndex = soapXml.indexOf(endTag);
+
+        if (startIndex !== -1 && endIndex !== -1) {
+            const returnValue = soapXml.substring(startIndex + startTag.length, endIndex);
+
+            if (returnValue === 'success') {
+                return res.json({ 
+                    message: returnValue,
+                    correctResults: correctResults,
+                    wrongResults: wrongResults,
+                });
+            } else {
+                return res.status(500).json({ message: returnValue });
+            }
+        } else {
+            return res.status(500).json({ message: 'Error parsing SOAP response' });
+        }
+
     } catch (error) {
         console.error(error);
         res.status(500).json({
