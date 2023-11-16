@@ -77,7 +77,7 @@ router.put('/edit/:id', accessValidation, async (req, res) => {
 })
 
 // Get all merch
-router.get('/', async (req, res) => {
+router.get('/', accessValidation, async (req, res) => {
     try {
         const result = await prisma.merchandise.findMany();
 
@@ -94,7 +94,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get merch by id
-router.get('/:id', async (req, res) => {
+router.get('/:id', accessValidation, async (req, res) => {
     const { id } = req.params; 
 
     try {
@@ -214,7 +214,8 @@ router.delete('/delete/:id', accessValidation, async (req, res) => {
     }
 });
 
-router.get('/validate/:id', async (req, res) => {
+// Validate
+router.get('/validate/:id', accessValidation, async (req, res) => {
     const { id } = req.params;
 
     try {
