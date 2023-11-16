@@ -147,7 +147,7 @@ router.post('/buy/:merch_id', async (req, res) => {
                         <user_id>${user_id}</user_id>
                         <amount>${merch.price}</amount>
                         <email>${email}</email>
-                        <type>buy merch</type>
+                        <type>Buy Merch: ${merch.name}</type>
                     </ser:createTransaction>
                 </soapenv:Body>
             </soapenv:Envelope>
