@@ -165,7 +165,7 @@ router.delete('/delete/:exe_id', accessValidation, async (req, res) => {
 });
 
 // Get all exercises
-router.get('/', async (req, res) => {
+router.get('/', accessValidation, async (req, res) => {
     try {
         const result = await prisma.exercise.findMany({
             select: {
@@ -190,7 +190,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get exercise by id
-router.get('/:id', async (req, res) => {
+router.get('/:id', accessValidation, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -371,7 +371,7 @@ router.post('/result/:exercise_id', async (req, res) => {
 });
 
 // validate exercise id
-router.get('/validate/:id', async (req, res) => {
+router.get('/validate/:id', accessValidation, async (req, res) => {
     const { id } = req.params;
 
     try {
