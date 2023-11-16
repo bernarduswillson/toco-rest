@@ -175,11 +175,11 @@ router.post('/buy/:merch_id', async (req, res) => {
             const returnValue = soapXml.substring(startIndex + startTag.length, endIndex);
 
             if (returnValue === 'success') {
-                return res.json({ message: 'Transaction successful' });
+                return res.json({ message: returnValue });
             } else if (returnValue === 'insufficient gems') {
-                return res.status(400).json({ message: 'Transaction failed, insufficient gems' });
+                return res.status(400).json({ message: returnValue });
             } else {
-                return res.status(500).json({ message: 'Transaction failed' });
+                return res.status(500).json({ message: returnValue });
             }
         } else {
             return res.status(500).json({ message: 'Error parsing SOAP response' });
