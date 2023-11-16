@@ -10,6 +10,7 @@ router.get('/', accessValidation, async (req, res) => {
   try {
     const response = await prisma.voucher.findMany({
       select: {
+        voucher_id: true,
         code: true,
         amount: true,
     },
@@ -37,6 +38,7 @@ router.get('/:id', accessValidation, async (req, res) => {
         voucher_id: parseInt(id),
       },
       select: {
+        voucher_id: true,
         code: true,
         amount: true,
       },
