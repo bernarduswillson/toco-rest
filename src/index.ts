@@ -7,6 +7,7 @@ import questionRoutes from './routes/question'
 import optionRoutes from './routes/option'
 import progressRoutes from './routes/progress'
 import merchRoutes from './routes/merch'
+import adminRoutes from './routes/admin'
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/question', questionRoutes);
 app.use('/option', optionRoutes);
 app.use('/progress', progressRoutes);
 app.use('/merch', merchRoutes);
+app.use('/admin', adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running in PORT: ${PORT}`);

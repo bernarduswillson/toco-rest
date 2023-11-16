@@ -9,16 +9,6 @@ type Results = {
     [question_id: number]: string | null;
 };
 
-interface QuestionResult {
-    question_id: number;
-    question: string;
-    options?: Array<{
-        option_id: number;
-        option: string;
-        is_correct: boolean;
-    }> 
-}
-
 // Create exercise
 router.post('/create', accessValidation, async (req, res) => {
 
