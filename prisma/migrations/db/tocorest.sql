@@ -147,3 +147,5 @@ INSERT INTO "option" ("question_id", "option") VALUES (3, 'Tidak ada yang benar'
 INSERT INTO "merchandise" ("name", "price", "image", "desc") VALUES ('T-Shirt', 10000, 'pp.jpg', 'T-Shirt with Toco Logo');
 INSERT INTO "merchandise" ("name", "price", "image", "desc") VALUES ('Mug', 1000, 'pp.jpg', 'Mug with Toco Logo');
 INSERT INTO "merchandise" ("name", "price", "image", "desc") VALUES ('Sticker', 500, 'pp.jpg', 'Sticker with Toco Logo');
+
+INSERT INTO "voucher" ("code", "amount") VALUES ('HALLOWEEN', 15);

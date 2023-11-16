@@ -3,11 +3,12 @@ import imageRoutes from './routes/image';
 import authRoutes from './routes/auth';
 import exerciseRoutes from './routes/exercise';
 import languageRoutes from './routes/language';
-import questionRoutes from './routes/question'
-import optionRoutes from './routes/option'
-import progressRoutes from './routes/progress'
-import merchRoutes from './routes/merch'
-import adminRoutes from './routes/admin'
+import questionRoutes from './routes/question';
+import optionRoutes from './routes/option';
+import progressRoutes from './routes/progress';
+import merchRoutes from './routes/merch';
+import adminRoutes from './routes/admin';
+import voucherRoutes from './routes/voucher';
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/option', optionRoutes);
 app.use('/progress', progressRoutes);
 app.use('/merch', merchRoutes);
 app.use('/admin', adminRoutes);
+app.use('/voucher', voucherRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running in PORT: ${PORT}`);
