@@ -248,8 +248,7 @@ router.post("/create", accessValidation, async (req, res) => {
 })
 
 // Check score
-// Check score
-router.post('/result/:exercise_id', accessValidation, async (req, res) => {
+router.post('/result/:exercise_id', async (req, res) => {
     const { exercise_id } = req.params;
     const { selectedOptions, userId, isDone } = req.body;
 
@@ -325,7 +324,7 @@ router.post('/result/:exercise_id', accessValidation, async (req, res) => {
                 'X-api-key': 'toco_rest',
             };
 
-            const soapResponse = await fetch('http://localhost:8080/service/gems', {
+            const soapResponse = await fetch('http://soap:8080/service', {
                 method: 'POST',
                 headers: headers,
                 body: soapRequest,

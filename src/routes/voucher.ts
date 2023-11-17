@@ -203,7 +203,7 @@ router.delete('/delete/:id', accessValidation, async (req, res) => {
 });
 
 // Find voucher by code, send to SOAP
-router.post('/use/:code', accessValidation, async (req, res) => {
+router.post('/use/:code', async (req, res) => {
   const { code } = req.params;
   const { user_id } = req.body;
 
@@ -240,7 +240,7 @@ router.post('/use/:code', accessValidation, async (req, res) => {
       'X-api-key': 'toco_rest',
     };
 
-    const soapResponse = await fetch('http://localhost:8080/service', {
+    const soapResponse = await fetch('http://soap:8080/service', {
       method: 'POST',
       headers: headers,
       body: soapRequest,

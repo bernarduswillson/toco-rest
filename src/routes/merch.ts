@@ -181,7 +181,7 @@ router.post('/create', accessValidation, upload.single('image'), async (req, res
 });
 
 // try buying merch (validate to SOAP)
-router.post('/buy/:merch_id', accessValidation, async (req, res) => {
+router.post('/buy/:merch_id', async (req, res) => {
     const { merch_id } = req.params;
     const { user_id, email } = req.body;
 
@@ -215,7 +215,7 @@ router.post('/buy/:merch_id', accessValidation, async (req, res) => {
             'X-api-key': 'toco_rest',
         };
 
-        const soapResponse = await fetch('http://localhost:8080/service/transaction', {
+        const soapResponse = await fetch('http://soap:8080/service', {
             method: 'POST',
             headers: headers,
             body: soapRequest,
