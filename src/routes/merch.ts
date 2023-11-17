@@ -77,7 +77,7 @@ router.put('/edit/:id', accessValidation, async (req, res) => {
 })
 
 // Get all merch
-router.get('/', accessValidation, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const result = await prisma.merchandise.findMany();
 
