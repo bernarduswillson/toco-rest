@@ -1,32 +1,23 @@
-# Soap Service for Toco
+# Rest Service for Toco
 
-
-## Introduction
-Toco-rest is a rest service for Toco. It is a simple service that allows toco to communicate with other systems using rest. it is built using express and postgres for the database . This service is built to complete IF3110 assignment.
+## Description
+Toco-rest is a web back-end for Toco-spa. It is a service that allows toco to handle logic on the server side, fetch databases, and to communicate with other systems using restful APIs. it is built using expressJs and postgres.
 
 ## Features Overview
-  - [x] manage exrcise
-  - [x] manage merchandise
-  - [x] manage voucher
-
-
-## Installation
-there are 2 ways that you can run this server
-
-1. using docker
-- make sure you have docker installed
-- run `docker compose build`
-- run `docker compose up`
-- the server will run on port 5000
+  - [x] Authentication (JWT)
+  - [x] Authentication (Api Key)
+  - [x] Exercise API (including Question API and Option API)
+  - [x] Merchandise API
+  - [x] Admin API
+  - [x] Voucher API
+  - [x] Language API
+  - [x] Progress API
 
 ## Database Schema
 Toco soap service uses 7 tables in the database, the tables are `admin`, `exercise`, `question`, `option`, `progress`, `merchandise`, and `voucher` . The schema for the tables are as follows
 ![schema]( img/rest_ERD.png)
 
-
-
 ## Endpoints
-
 ### Admin
 - GET / -> get all admin
 - GET /search -> search admin
@@ -36,15 +27,14 @@ Toco soap service uses 7 tables in the database, the tables are `admin`, `exerci
 - DELETE /delete/:id -> delete admin
 
 ### Auth
-- POST /register
-- POST /login
-- POST /check-email
-- POST /check-username
-- GET /validate -> validating token
+- POST /login -> login
+- POST /check-email -> email validation
+- POST /check-username -> username validation
+- GET /validate -> token validation
 
 ### Exercise
-- GET / -> get all exercise
-- GET /search -> search exercise
+- GET / -> get all exercises
+- GET /search -> search exercises
 - GET /:id -> get exercise by id
 - GET /validate/:id -> validate exercise by id
 - POST /create -> create exercise
@@ -53,11 +43,11 @@ Toco soap service uses 7 tables in the database, the tables are `admin`, `exerci
 - DELETE /delete/:exe_id -> delete exercise
 
 ### Image
-- GET / -> get all image
+- GET / -> get all images
 - POST /upload -> upload image
 
 ### Language
-- GET / -> get all language
+- GET / -> get all languages
 
 ### Merch
 - GET / -> get all merch
@@ -97,7 +87,22 @@ Toco soap service uses 7 tables in the database, the tables are `admin`, `exerci
 - DELETE /delete/:id -> delete voucher
 - POST /use/:code -> use voucher
 
-
+| Fitur                     | NIM      |
+| ------------------------  | -------- |
+| Token authentication      |  13521021|
+| ApiKey authentication     |  13521019|
+| ApiKey database           |  13521019|
+| Image API                 |  13521019, 13521021|
+| Exercise API              |  13521019, 13521021|
+| Exercise database         |  13521021|
+| Merchandise API           |  13521019, 13521021|
+| Merchandise database      |  13521021|
+| Admin API                 |  13521019
+| Admin database            |  13521021|
+| Voucher API               |  13521019|
+| Voucher database          |  13521021|
+| Language API              |  13521021|
+| Progress API              |  13521021|
 
 
 
