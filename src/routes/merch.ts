@@ -163,7 +163,7 @@ router.post('/create', accessValidation, upload.single('image'), async (req, res
             data: {
                 name,
                 price: parseInt(price),
-                image: req.file?.path,
+                image: req.file?.filename,
                 desc,
             }
         });
