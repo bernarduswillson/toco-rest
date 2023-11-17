@@ -71,6 +71,14 @@ CREATE TABLE "voucher" (
     CONSTRAINT "voucher_pkey" PRIMARY KEY ("voucher_id")
 );
 
+-- CreateTable
+CREATE TABLE "api_key" (
+    "key_id" SERIAL NOT NULL,
+    "key" VARCHAR(255) NOT NULL,
+
+    CONSTRAINT "api_key_pkey" PRIMARY KEY ("key_id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "email" ON "admin"("email");
 
@@ -86,6 +94,9 @@ CREATE UNIQUE INDEX "name" ON "merchandise"("name");
 -- CreateIndex
 CREATE UNIQUE INDEX "code" ON "voucher"("code");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "key" ON "api_key"("key");
+
 -- AddForeignKey
 ALTER TABLE "question" ADD CONSTRAINT "question_exercise_id_fkey" FOREIGN KEY ("exercise_id") REFERENCES "exercise"("exercise_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -94,7 +105,6 @@ ALTER TABLE "option" ADD CONSTRAINT "option_question_id_fkey" FOREIGN KEY ("ques
 
 -- AddForeignKey
 ALTER TABLE "progress" ADD CONSTRAINT "progress_exercise_id_fkey" FOREIGN KEY ("exercise_id") REFERENCES "exercise"("exercise_id") ON DELETE CASCADE ON UPDATE CASCADE;
-
 
 -- TRIGGER
 CREATE OR REPLACE FUNCTION check_progress()
@@ -149,3 +159,5 @@ INSERT INTO "merchandise" ("name", "price", "image", "desc") VALUES ('Mug', 1000
 INSERT INTO "merchandise" ("name", "price", "image", "desc") VALUES ('Sticker', 500, 'pp.jpg', 'Sticker with Toco Logo');
 
 INSERT INTO "voucher" ("code", "amount") VALUES ('HALLOWEEN', 15);
+
+INSERT INTO "api_key" ("key") VALUES ('ax5kBNUxP2Cr0l8dwR472lMOiPeyJLRY7mKbTw0Cc8Z3hVW2kYmtAFcTNctI9139hHWUbJ5q3U8mRlZopXhFd9sTleg4lPr0DQkeMg3ntQZZFaTrASrWbc5QZ4CDIlPO');

@@ -68,3 +68,8 @@ model voucher {
   code       String   @unique(map: "code") @db.VarChar(255)
   amount     Int      @db.Integer
 }
+
+model api_key {
+  key_id  Int     @id @default(autoincrement())
+  key     String  @unique(map: "key") @db.VarChar(255)
+}
