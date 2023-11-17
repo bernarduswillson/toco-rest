@@ -10,7 +10,7 @@ const accessValidation = (req: Request, res: Response, next: NextFunction) => {
     const validationReq = req as ValidationRequest
     const {authorization} = validationReq.headers;
 
-    console.log('here: ', authorization)
+    // console.log('here: ', authorization)
 
     if(!authorization){
         return res.status(401).json({

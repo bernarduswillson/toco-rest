@@ -30,6 +30,57 @@ router.get('/', accessValidation, async (req, res) => {
   }
 });
 
+// Search admin
+router.get('/search', accessValidation, async (req, res) => {
+  const { q } = req.query;
+
+  let whereCondition = {}
+
+  if (q) {
+    whereCondition = {
+      OR: [
+        {
+          username: {
+            contains: String(q) || '', 
+            mode: 'insensitive', 
+          },
+        },
+        {
+          email: {
+            contains: String(q) || '', 
+            mode: 'insensitive', 
+          },
+        },
+      ],
+    };
+    console.log(q);
+  }
+
+  console.log('hai');
+
+  try {
+      const result = await prisma.admin.findMany({
+        where: whereCondition,
+        select: {
+            admin_id: true,
+            username: true,
+            email: true,
+            password: false,
+          },
+      });
+
+      res.json({
+          message: 'Admins retrieved successfully',
+          result,
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({
+          message: 'An error occurred while retrieving the exercises',
+      });
+  }
+});
+
 // Get admin by id
 router.get('/:id', accessValidation, async (req, res) => {
   const { id } = req.params;
