@@ -28,6 +28,47 @@ router.get('/', accessValidation, async (req, res) => {
   }
 });
 
+// Search voucher
+router.get('/search', accessValidation, async (req, res) => {
+  const { q } = req.query;
+
+  let whereCondition = {}
+
+  if (q) {
+    whereCondition = {
+      OR: [
+        {
+          code: {
+            contains: String(q) || '', 
+            mode: 'insensitive', 
+          },
+        },
+      ],
+    };
+  } 
+
+  try {
+    const response = await prisma.voucher.findMany({
+      where: whereCondition,
+      select: {
+        voucher_id: true,
+        code: true,
+        amount: true,
+    },
+    });
+
+    res.status(200).json({
+      message: 'Vouchers retrieved successfully',
+      result: response
+    })
+  } catch (error) {
+    console.log(error);
+    res.json({
+      message: 'An error occurred while retrieving vouchers'
+    });
+  }
+});
+
 // Get voucher by id
 router.get('/:id', accessValidation, async (req, res) => {
   const { id } = req.params;
