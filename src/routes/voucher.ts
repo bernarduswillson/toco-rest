@@ -179,7 +179,7 @@ router.put('/edit/:id', accessValidation, async (req, res) => {
 });
 
 // Delete voucher 
-router.put('/delete/:id', accessValidation, async (req, res) => {
+router.delete('/delete/:id', accessValidation, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -203,7 +203,7 @@ router.put('/delete/:id', accessValidation, async (req, res) => {
 });
 
 // Find voucher by code, send to SOAP
-router.post('/use/:code', async (req, res) => {
+router.post('/use/:code', accessValidation, async (req, res) => {
   const { code } = req.params;
   const { user_id } = req.body;
 

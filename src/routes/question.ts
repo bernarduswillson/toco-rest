@@ -81,7 +81,7 @@ router.delete('/delete/:q_id', accessValidation, async (req, res) => {
 });
 
 // Get questions from exercise
-router.get('/:exe_id', async (req, res) => {
+router.get('/:exe_id', accessValidation, async (req, res) => {
     const { exe_id } = req.params;
 
     try {
@@ -109,7 +109,7 @@ router.get('/:exe_id', async (req, res) => {
 });
 
 // Get questions count
-router.get('/count/:exe_id', async (req, res) => {
+router.get('/count/:exe_id', accessValidation, async (req, res) => {
     const { exe_id } = req.params;
 
     try {
