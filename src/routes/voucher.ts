@@ -93,10 +93,11 @@ router.post('/create', accessValidation, async (req, res) => {
     const response = await prisma.voucher.create({
       data: {
           code,
-          amount,
+          amount: parseInt(amount),
       },
     });
 
+    console.log('cool');
     res.status(200).json({
       message: 'Voucher successfully created',
       result: response,
