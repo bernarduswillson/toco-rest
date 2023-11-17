@@ -97,7 +97,6 @@ router.post('/create', accessValidation, async (req, res) => {
       },
     });
 
-    console.log('cool');
     res.status(200).json({
       message: 'Voucher successfully created',
       result: response,
@@ -122,7 +121,7 @@ router.put('/edit/:id', accessValidation, async (req, res) => {
       },
       data: {
           code,
-          amount,
+          amount: parseInt(amount),
       },
     });
 
