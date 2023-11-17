@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Get image
-router.get('/', (req, res) => {
+router.get('/', accessValidation, (req, res) => {
     const { filename } = req.query;
 
     if (!filename) {

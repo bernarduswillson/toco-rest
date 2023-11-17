@@ -4,7 +4,7 @@ import accessValidation from '../middleware/accessValidation';
 const router = express.Router();
 
 // Get all languages from php endpoint
-router.get('/', async (req, res) => {
+router.get('/', accessValidation, async (req, res) => {
     try {
         const response = await fetch('http://localhost:8008/api/endpoint/language.php');
 

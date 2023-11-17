@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Get all merch
-router.get('/', async (req, res) => {
+router.get('/', accessValidation, async (req, res) => {
     try {
         const result = await prisma.merchandise.findMany({
             select: {
@@ -181,7 +181,7 @@ router.post('/create', accessValidation, upload.single('image'), async (req, res
 });
 
 // try buying merch (validate to SOAP)
-router.post('/buy/:merch_id', async (req, res) => {
+router.post('/buy/:merch_id', accessValidation, async (req, res) => {
     const { merch_id } = req.params;
     const { user_id, email } = req.body;
 

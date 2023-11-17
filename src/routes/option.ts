@@ -83,7 +83,7 @@ router.delete('/delete/:o_id', accessValidation, async (req, res) => {
 });
 
 // Get options from question
-router.get('/:q_id', async (req, res) => {
+router.get('/:q_id', accessValidation, async (req, res) => {
     const { q_id } = req.params;
 
     try {

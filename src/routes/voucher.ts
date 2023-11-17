@@ -179,7 +179,7 @@ router.put('/edit/:id', accessValidation, async (req, res) => {
 });
 
 // Delete voucher 
-router.put('/delete/:id', accessValidation, async (req, res) => {
+router.delete('/delete/:id', accessValidation, async (req, res) => {
   const { id } = req.params;
 
   try {

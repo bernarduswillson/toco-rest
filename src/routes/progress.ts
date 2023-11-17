@@ -6,7 +6,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 // create progress
-router.post('/create', async (req, res) => {
+router.post('/create', accessValidation, async (req, res) => {
     const { user_id, exercise_id, score } = req.body;
 
     try {
@@ -31,7 +31,7 @@ router.post('/create', async (req, res) => {
 });
 
 // get progress by user_id
-router.get('/user/:user_id', async (req, res) => {
+router.get('/user/:user_id', accessValidation, async (req, res) => {
     const { user_id } = req.params;
 
     try {

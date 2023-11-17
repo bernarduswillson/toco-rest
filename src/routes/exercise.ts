@@ -248,7 +248,7 @@ router.post("/create", accessValidation, async (req, res) => {
 })
 
 // Check score
-router.post("/result/:exercise_id", async (req, res) => {
+router.post("/result/:exercise_id", accessValidation, async (req, res) => {
   const { exercise_id } = req.params
   const { selectedOptions, userId } = req.body
 
