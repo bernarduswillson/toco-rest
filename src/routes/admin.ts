@@ -53,10 +53,7 @@ router.get('/search', accessValidation, async (req, res) => {
         },
       ],
     };
-    console.log(q);
   }
-
-  console.log('hai');
 
   try {
       const result = await prisma.admin.findMany({

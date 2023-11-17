@@ -20,66 +20,18 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Create merch
-router.post('/create', accessValidation, upload.single('image'), async (req, res) => {
-    const { name, price, desc } = req.body;
-
-    try {
-        const result = await prisma.merchandise.create({
-            data: {
-                name,
-                price: parseInt(price),
-                image: req.file?.path,
-                desc,
-            }
-        });
-
-        res.json({
-            message: 'Merch created successfully',
-            result,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: 'An error occurred while creating the merch',
-        });
-    }
-});
-
-// Update merch
-router.put('/edit/:id', accessValidation, async (req, res) => {
-    const { id } = req.params;
-    const { name, price, image, desc } = req.body;
-
-    try {
-        const result = await prisma.merchandise.update({
-            where: {
-                merchandise_id: parseInt(id),
-            },
-            data: {
-                name,
-                price,
-                image,
-                desc,
-            }
-        });
-
-        res.json({
-            message: 'Merch updated successfully',
-            result,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: 'An error occurred while updating the merch',
-        });
-    }
-})
-
 // Get all merch
 router.get('/', accessValidation, async (req, res) => {
     try {
-        const result = await prisma.merchandise.findMany();
+        const result = await prisma.merchandise.findMany({
+            select: {
+                merchandise_id: true,
+                name: true,
+                price: true,
+                image: true,
+                desc: true,
+            }
+        });
 
         res.json({
             message: 'Merch retrieved successfully',
@@ -89,6 +41,85 @@ router.get('/', accessValidation, async (req, res) => {
         console.error(error);
         res.status(500).json({
             message: 'An error occurred while retrieving the merch',
+        });
+    }
+});
+
+// Search filter
+router.get('/search', accessValidation, async (req, res) => {
+    const { q } = req.query;
+
+    let whereCondition = {};
+
+    if (q) {
+        whereCondition = {
+            OR: [
+              {
+                name: {
+                  contains: String(q) || '', 
+                  mode: 'insensitive', 
+                },
+              },
+              {
+                desc: {
+                  contains: String(q) || '', 
+                  mode: 'insensitive', 
+                },
+              },
+            ],
+        }; 
+    }
+    
+    try {
+        const result = await prisma.merchandise.findMany({
+            where: whereCondition,
+            select: {
+                merchandise_id: true,
+                name: true,
+                price: true,
+                image: true,
+                desc: true,
+            }
+        },);
+
+        console.log(result)
+
+        res.json({
+            message: 'Merch retrieved successfully',
+            result,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'An error occurred while retrieving the merch',
+        });
+    }
+});
+
+// Validate
+router.get('/validate/:id', accessValidation, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const merchandise = await prisma.merchandise.findUnique({
+            where: {
+                merchandise_id: parseInt(id),
+            },
+            select: {
+                merchandise_id: true,
+            },
+        });
+
+        const isValid = merchandise !== null;
+
+        res.json({
+            message: 'Merchandise id validated successfully',
+            result: isValid,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'An error occurred while validating the merchandise id',
         });
     }
 });
@@ -121,7 +152,33 @@ router.get('/:id', accessValidation, async (req, res) => {
             message: 'An error occurred while retrieving the merch',
         });
     }
-})
+});
+
+// Create merch
+router.post('/create', accessValidation, upload.single('image'), async (req, res) => {
+    const { name, price, desc } = req.body;
+
+    try {
+        const result = await prisma.merchandise.create({
+            data: {
+                name,
+                price: parseInt(price),
+                image: req.file?.path,
+                desc,
+            }
+        });
+
+        res.json({
+            message: 'Merch created successfully',
+            result,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'An error occurred while creating the merch',
+        });
+    }
+});
 
 // try buying merch (validate to SOAP)
 router.post('/buy/:merch_id', async (req, res) => {
@@ -193,6 +250,38 @@ router.post('/buy/:merch_id', async (req, res) => {
     }
 });
 
+// Update merch
+router.put('/edit/:id', accessValidation, async (req, res) => {
+    const { id } = req.params;
+    const { name, price, image, desc } = req.body;
+
+    try {
+        const result = await prisma.merchandise.update({
+            where: {
+                merchandise_id: parseInt(id),
+            },
+            data: {
+                name,
+                price,
+                image,
+                desc,
+            }
+        });
+
+        res.json({
+            message: 'Merch updated successfully',
+            result,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'An error occurred while updating the merch',
+        });
+    }
+});
+
+
+// Delete merch
 router.delete('/delete/:id', accessValidation, async (req, res) => {
     const { id } = req.params;
     
@@ -210,34 +299,6 @@ router.delete('/delete/:id', accessValidation, async (req, res) => {
     } catch (error) {
         res.status(500).json({
             message: 'An error occurred while deleting the merchandise',
-        });
-    }
-});
-
-// Validate
-router.get('/validate/:id', accessValidation, async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const merchandise = await prisma.merchandise.findUnique({
-            where: {
-                merchandise_id: parseInt(id),
-            },
-            select: {
-                merchandise_id: true,
-            },
-        });
-
-        const isValid = merchandise !== null;
-
-        res.json({
-            message: 'Merchandise id validated successfully',
-            result: isValid,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: 'An error occurred while validating the merchandise id',
         });
     }
 });
