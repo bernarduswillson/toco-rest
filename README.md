@@ -21,7 +21,7 @@ there are 2 ways that you can run this server
 
 ## Database Schema
 Toco soap service uses 7 tables in the database, the tables are `admin`, `exercise`, `question`, `option`, `progress`, `merchandise`, and `voucher` . The schema for the tables are as follows
-![schema]( img/rest-ERD.png)
+![schema]( img/rest_ERD.png)
 
 
 
