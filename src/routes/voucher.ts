@@ -93,7 +93,7 @@ router.post('/create', accessValidation, async (req, res) => {
     const response = await prisma.voucher.create({
       data: {
           code,
-          amount,
+          amount: parseInt(amount),
       },
     });
 
@@ -121,7 +121,7 @@ router.put('/edit/:id', accessValidation, async (req, res) => {
       },
       data: {
           code,
-          amount,
+          amount: parseInt(amount),
       },
     });
 
